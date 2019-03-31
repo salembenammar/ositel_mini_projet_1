@@ -81,7 +81,7 @@ class TransactionService implements TransactionServiceInterface
             $result['data'] = [];
             foreach ($transactions as $transaction) {
                 /** @var Transaction $transaction */
-                $result['data'][] = [
+                $result['data'][] = (object) [
                     $transaction->getTitle(),
                     $transaction->getDescription(),
                     $transaction->getAmount() . ' €',
