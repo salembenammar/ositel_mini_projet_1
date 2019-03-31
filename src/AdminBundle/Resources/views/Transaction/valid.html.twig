@@ -1,0 +1,118 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block screen_content %}
+<p>
+    <a class="btn btn-secondary" href="{{ path('transaction_screen_1') }}" role="button">Ecran 1</a>
+    <a class="btn btn-secondary disabled" href="#" role="button">Ecran 2</a>
+</p>
+{% endblock %}
+
+{% block main_content %}
+
+<select id="selectedMonth" class="form-control">
+    <option value="1">Janvier</option>
+    <option value="2">Février</option>
+    <option value="3">Mars</option>
+    <option value="4">Avril</option>
+    <option value="5">Mai</option>
+    <option value="6">Juin</option>
+    <option value="7">Juillet</option>
+    <option value="8">Août</option>
+    <option value="9">Septembre</option>
+    <option value="10">Octobre</option>
+    <option value="11">Novembre</option>
+    <option value="12">Décembre</option>
+</select>
+
+<br/>
+
+<div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Nb des Transactions</h2>
+            <p><span id="nbTransaction" style="color: blue">0</span> Transaction(s).</p>
+        </div>
+        <div class="col-md-4">
+            <h2>Somme du mois</h2>
+            <p>IN (<span id="inValue" style="color: green">0</span> €) / OUT (<span id="outValue" style="color: red">0</span> €) . </p>
+        </div>
+        <div class="col-md-4">
+            <h2>Montant de la trésorerie</h2>
+            <p>DEBUT (<span id="startMonth" style="color: grey">0</span> €) / FIN (<span id="endMonth" style="color: grey">0</span> €) . </p>
+        </div>
+    </div>
+
+    <hr>
+
+</div>
+
+<table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+    <thead>
+    <tr>
+        <th>Titre</th>
+        <th>Description</th>
+        <th>Montant</th>
+        <th>Catégorie</th>
+        <th>In/Out</th>
+        <th>Date création</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+
+    $('#selectedMonth').val({{ "now"|date("m") }});
+
+    $('#selectedMonth').on('change', function() {
+        $('#example').DataTable().destroy();
+        var route = "{{ path('transaction_valid_list', { month: "PLACEHOLDER" }) }}";
+        var url = route.replace("PLACEHOLDER", this.value);
+        loadDataTable(url);
+        setStatistics(url);
+    });
+
+    $(document).ready(function() {
+        var url = '{{ path("transaction_valid_list", {month: "now"|date("m") }) }}';
+        loadDataTable(url);
+        setStatistics(url);
+    } );
+
+
+    function loadDataTable(url) {
+        $('#example').DataTable( {
+            columnDefs: [
+                {
+                    "targets": [ 6 ],
+                    "visible": false
+                }
+            ],
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.16/i18n/French.json"
+            },
+            ajax: {
+                url: url,
+            }
+        } );
+    }
+
+
+    function setStatistics(url) {
+        $.ajax({
+            type : 'GET',
+            url : url,
+            success : function(data) {
+                $('#nbTransaction').html(data.recordsTotal);
+                $('#inValue').html(data.transactionInValue);
+                $('#outValue').html(data.transactionOutValue);
+                $('#startMonth').html(data.amountStartMonth);
+                $('#endMonth').html(data.amountEndMonth);
+            }
+        });
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{#{% extends 'AdminBundle::layout.html.twig' %}#}
+{% extends '@Admin/layout.html.twig' %}
+
+{% block screen_content %}
+<p>
+    <a class="btn btn-secondary" href="{{ path('transaction_screen_1') }}" role="button">Ecran 1</a>
+    <a class="btn btn-secondary" href="{{ path('transaction_screen_2') }}" role="button">Ecran 2</a>
+</p>
+{% endblock %}
+
+{% block main_content %}
+    <b>Voulez vous vraiment supprimer cette transaction ? </b> <br/><br/><br/>
+
+    <table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Montant</th>
+            <th>Catégorie</th>
+            <th>In/Out</th>
+            <th>Date création</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ entity.title }}</td>
+            <td>{{ entity.description }}</td>
+            <td>{{ entity.amount }}</td>
+            <td>{% if entity.category %}{{ entity.category.title }}{% else %}--{% endif %}</td>
+            <td>{% if entity.isInput %}IN{% else %}OUT{% endif %}</td>
+            <td>{{ entity.createdAt|date("d/m/Y") }}</td>
+            <td> -- </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <br>
+    <br>
+
+    <a class="btn btn-secondary float-right" href="{{ path('transaction_delete', {id: entity.id }) }}" role="button">Supprimer</a>
+    <a class="btn btn-link float-right" href="{{ path('transaction_screen_1') }}" role="button">Retour</a>
+
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable( {
+                searching: false,
+                paging: false,
+                info: false,
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.10.16/i18n/French.json"
+                }
+            } );
+        } );
+    </script>
+
+{% endblock %}
