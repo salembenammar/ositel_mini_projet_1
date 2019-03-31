@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" xml:lang="fr" lang="fr">
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>OSITEL Transactions</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Theme/css/bootstrap.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('Theme/font-awesome/css/font-awesome.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('DataTable/bootstrap.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('DataTable/dataTables.bootstrap4.min.css') }}"/>
+
+    <script type="text/javascript" src='{{ asset('JQuery/jquery-3.3.1.min.js') }}'></script>
+    <script type="text/javascript" src='{{ asset('Theme/js/bootstrap.js') }}'></script>
+    <script type="text/javascript" src='{{ asset('DataTable/jquery.dataTables.min.js') }}'></script>
+    <script type="text/javascript" src='{{ asset('DataTable/dataTables.bootstrap4.min.js') }}'></script>
+
+</head>
+
+
+
+<body cz-shortcut-listen="true">
+
+<main role="main" style="width: 100%">
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">OSITEL France</h1>
+            <p>Ceci est un projet pour le compte d'OSITEL France. <br> L'objectif est d'implémenter une application web de gestion de trésorerie avec Symfony3.</p>
+            {% block screen_content %}
+            {% endblock screen_content %}
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {% block main_content %}
+                {% endblock main_content %}
+            </div>
+        </div>
+        <hr>
+    </div>
+
+</main>
+
+</body>
+</html>
