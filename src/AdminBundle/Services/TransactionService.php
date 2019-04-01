@@ -67,44 +67,37 @@ class TransactionService implements TransactionServiceInterface
         }
 
 
-        if ($request->isXmlHttpRequest()) {
+        // Formatter le retour JSON pour dataTable
+        $result = [];
+        $result['draw'] = (int)(array_key_exists('draw', $request) ? $request['draw'] : 1);
+        $result['recordsTotal'] = count($transactions);
+        $result['recordsFiltered'] = count($transactions);
+        $result['transactionInValue'] = 0;
+        $result['transactionOutValue'] = 0;
+        $result['amountStartMonth'] = $transactionsOftheLastMonthsValue;
+        $result['amountEndMonth'] = $transactionsOftheLastMonthsValue;
+        $result['data'] = [];
+        foreach ($transactions as $transaction) {
+            /** @var Transaction $transaction */
+            $result['data'][] = (object) [
+                $transaction->getTitle(),
+                $transaction->getDescription(),
+                $transaction->getAmount() . ' €',
+                $transaction->getCategory() ? $transaction->getCategory()->getTitle() : '-',
+                $transaction->getIsInput() ? 'IN' : 'OUT',
+                $transaction->getCreatedAt()->format('d-m-Y'),
+                $this->twig->render('@Admin/Transaction/action.html.twig', array('id'=>$transaction->getId()))
+            ];
 
-            // Formatter le retour JSON pour dataTable
-            $result = [];
-            $result['draw'] = (int)(array_key_exists('draw', $request) ? $request['draw'] : 1);
-            $result['recordsTotal'] = count($transactions);
-            $result['recordsFiltered'] = count($transactions);
-            $result['transactionInValue'] = 0;
-            $result['transactionOutValue'] = 0;
-            $result['amountStartMonth'] = $transactionsOftheLastMonthsValue;
-            $result['amountEndMonth'] = $transactionsOftheLastMonthsValue;
-            $result['data'] = [];
-            foreach ($transactions as $transaction) {
-                /** @var Transaction $transaction */
-                $result['data'][] = (object) [
-                    $transaction->getTitle(),
-                    $transaction->getDescription(),
-                    $transaction->getAmount() . ' €',
-                    $transaction->getCategory() ? $transaction->getCategory()->getTitle() : '-',
-                    $transaction->getIsInput() ? 'IN' : 'OUT',
-                    $transaction->getCreatedAt()->format('d-m-Y'),
-                    $this->twig->render('@Admin/Transaction/action.html.twig', array('id'=>$transaction->getId()))
-                ];
-
-                if($transaction->getIsInput()){
-                    $result['transactionInValue'] += $transaction->getAmount();
-                    $result['amountEndMonth'] += $transaction->getAmount();
-                } else {
-                    $result['transactionOutValue'] += $transaction->getAmount();
-                    $result['amountEndMonth'] -= $transaction->getAmount();
-                }
+            if($transaction->getIsInput()){
+                $result['transactionInValue'] += $transaction->getAmount();
+                $result['amountEndMonth'] += $transaction->getAmount();
+            } else {
+                $result['transactionOutValue'] += $transaction->getAmount();
+                $result['amountEndMonth'] -= $transaction->getAmount();
             }
-            return new JsonResponse($result);
         }
-
-        return array(
-            'data' => $transactions
-        );
+        return new JsonResponse($result);
     }
 
 
